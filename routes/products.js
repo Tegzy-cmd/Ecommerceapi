@@ -66,7 +66,7 @@ router.get("/", async (req, res) => {
     } catch (err) {
         return res.status(500).json(err);
     }
-
+});
 //     // GET USER STATS   
 //     router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
 //         const date = new Date();
