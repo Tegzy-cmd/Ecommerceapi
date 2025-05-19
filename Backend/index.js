@@ -1,18 +1,17 @@
-const express = require("express");
-const { default: mongoose } = require("mongoose");
-const app = express();
-const dotenv = require("dotenv");
-const userRoute = require("./routes/user");
-const authRoute = require("./routes/auth");
-const productRoute = require("./routes/products");
-const orderRoute = require("./routes/order");
-const cartRoute = require("./routes/cart");
-const cors = require("cors");
-const paystackRoute = require("./routes/paystack");
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import userRoute from "./routes/user.js";
+import authRoute from "./routes/auth.js";
+import productRoute from "./routes/products.js";
+import orderRoute from "./routes/order.js";
+import cartRoute from "./routes/cart.js";
+import cors from "cors";
+import paystackRoute from "./routes/paystack.js";
 dotenv.config();
 
 mongoose
-  .connect(process.env.DATABASE_URL)
+  .connect(process.env.DATABASE_URI)
   .then(() => {
     console.log("Connected to database");
   })
@@ -22,7 +21,7 @@ mongoose
 
 app.use(express.json());
 app.use(cors());
-app.use("/api/checkout", paystackRoute);
+app.use("/api/checkout",paystackRoute);
 app.use("/api/users",userRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/products",productRoute);
@@ -32,6 +31,6 @@ app.use("/api/carts",cartRoute);
 
 
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server is running on port 3000");
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 3000}`);
 });
