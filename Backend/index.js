@@ -1,37 +1,54 @@
 const express = require("express");
-const { default: mongoose } = require("mongoose");
-const app = express();
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const userRoute = require("./routes/user");
-const authRoute = require("./routes/auth");
-const productRoute = require("./routes/products");
-const orderRoute = require("./routes/order");
-const cartRoute = require("./routes/cart");
 const cors = require("cors");
-const paystackRoute = require("./routes/paystack");
+const userRoute = require("./routes/user.js");
+const authRoute = require("./routes/auth.js");
+const productRoute = require("./routes/products.js");
+const orderRoute = require("./routes/order.js");
+const cartRoute = require("./routes/cart.js");
+const paystackRoute = require("./routes/paystack.js");
+
+// Load environment variables
 dotenv.config();
 
+const app = express();
+
+// Connect to MongoDB
 mongoose
-  .connect(process.env.DATABASE_URL)
+  .connect(process.env.DATABASE_URI)
   .then(() => {
     console.log("Connected to database");
   })
   .catch((err) => {
-    console.log(err);
+    const maskedUri = 'mongodb+srv://Tegzy:Benjamin007$@cluster0.mongodb.net/blog?retryWrites=true&w=majority&appName=Cluster0'
+      ? process.env.DATABASE_URI.replace(/:\/\/.*@/, "://***:***@")
+      : "undefined";
+    console.error("Database connection error:", err);
+    setTimeout(() => {
+      mongoose.connect(process.env.DATABASE_URI).catch((retryErr) => {
+        console.error("Retrying database connection failed:", retryErr);
+      });
+    }, 5000); // Retry after 5 seconds
+    process.exit(1);
   });
 
+// Middleware
 app.use(express.json());
 app.use(cors());
+
+app.get("/", (req, res) => {
+  res.send("Welcome to the E-commerce API");
+});
+// Routes
 app.use("/api/checkout", paystackRoute);
-app.use("/api/users",userRoute);
-app.use("/api/auth",authRoute);
-app.use("/api/products",productRoute);
-app.use("/api/orders",orderRoute);
-app.use("/api/carts",cartRoute);
+app.use("/api/users", userRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/products", productRoute);
+app.use("/api/orders", orderRoute);
+app.use("/api/carts", cartRoute);
 
-
-
-
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server is running on port 3000");
+// Start the server
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 3000}`);
 });
