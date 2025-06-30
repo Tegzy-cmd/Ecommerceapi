@@ -37,6 +37,9 @@ mongoose
 app.use(express.json());
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the E-commerce API");
+});
 // Routes
 app.use("/api/checkout", paystackRoute);
 app.use("/api/users", userRoute);
